@@ -7,8 +7,8 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from slack_bolt.authorization.authorize import InstallationStoreAuthorize
 from slack_bolt.oauth import OAuthFlow
 from slack_sdk import WebClient
-from slack_sdk_azure.oauth.installation_store import AzureBlobInstallationStore
-from slack_sdk_azure.oauth.state_store import AzureBlobOAuthStateStore
+from slack_sdk_azure.oauth.installation_store.azure_blob import AzureBlobInstallationStore
+from slack_sdk_azure.oauth.state_store.azure_blob import AzureBlobOAuthStateStore
 
 from slack_bolt.oauth.oauth_settings import OAuthSettings
 from slack_bolt.util.utils import create_web_client
