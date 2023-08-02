@@ -1,5 +1,6 @@
 import azure.functions as func
 import logging
+import urllib
 from slack_bolt.app import App
 from slack_bolt.request import BoltRequest
 from slack_bolt.response import BoltResponse
@@ -29,7 +30,7 @@ class SlackRequestHandler:
 
     def handle(self, req: func.HttpRequest) -> func.HttpResponse:
         method = req.method
-        url = urlparse(req.url)
+        url = urllib.parse.urlparse(req.url)
         if method == "GET":
             if self.app.oauth_flow is not None:
                 oauth_flow = self.app.oauth_flow
