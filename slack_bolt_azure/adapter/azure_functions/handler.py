@@ -7,9 +7,9 @@ from slack_bolt.response import BoltResponse
 
 def to_bolt_request(req: func.HttpRequest) -> BoltRequest:
     return BoltRequest(
-        body=req.get_body(),
+        body=str(req.get_body()),
         query=req.params,
-        headers=req.headers,
+        headers=dict(req.headers),
     )
 
 
@@ -28,10 +28,19 @@ class SlackRequestHandler:
         self.app = app
 
     def handle(self, req: func.HttpRequest) -> func.HttpResponse:
-        if req.method == "POST":
+        method = req.method
+        if req.method == "GET":
+            if self.app.oauth_flow is not None:
+                oauth_flow = self.app.oauth_flow
+                if req.path == oauth_flow.install_path:
+                    bolt_resp = oauth_flow.handle_installation(to_bolt_request(req))
+                    return to_azure_func_response(bolt_resp)
+                elif req.path == oauth_flow.redirect_uri_path:
+                    bolt_resp = oauth_flow.handle_callback(to_bolt_request(req))
+                    return to_azure_func_response(bolt_resp)
+        elif method == "POST":
             bolt_resp: BoltResponse = self.app.dispatch(to_bolt_request(req))
             return to_azure_func_response(bolt_resp)
-
         return func.HttpResponse(
             body="Not Found", status_code=404
         )
