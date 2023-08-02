@@ -29,13 +29,14 @@ class SlackRequestHandler:
 
     def handle(self, req: func.HttpRequest) -> func.HttpResponse:
         method = req.method
-        if req.method == "GET":
+        url = urlparse(req.url)
+        if method == "GET":
             if self.app.oauth_flow is not None:
                 oauth_flow = self.app.oauth_flow
-                if req.path == oauth_flow.install_path:
+                if url.path == oauth_flow.install_path:
                     bolt_resp = oauth_flow.handle_installation(to_bolt_request(req))
                     return to_azure_func_response(bolt_resp)
-                elif req.path == oauth_flow.redirect_uri_path:
+                elif url.path == oauth_flow.redirect_uri_path:
                     bolt_resp = oauth_flow.handle_callback(to_bolt_request(req))
                     return to_azure_func_response(bolt_resp)
         elif method == "POST":
