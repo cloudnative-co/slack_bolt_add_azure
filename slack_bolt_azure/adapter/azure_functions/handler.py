@@ -3,9 +3,18 @@ import json
 import logging
 import urllib
 from slack_bolt.app import App
-from slack_bolt.adapter.aws_lambda.internals import _first_value
+from slack_bolt.logger import get_bolt_app_logger
 from slack_bolt.request import BoltRequest
 from slack_bolt.response import BoltResponse
+from typing import Dict, Optional, Sequence
+
+
+def _first_value(query: Dict[str, Sequence[str]], name: str) -> Optional[str]:
+    if query:
+        values = query.get(name, [])
+        if values and len(values) > 0:
+            return values[0]
+    return None
 
 
 def to_bolt_request(req: func.HttpRequest) -> BoltRequest:
@@ -58,7 +67,7 @@ class SlackRequestHandler:
                 if is_callback:
                     bolt_resp = oauth_flow.handle_callback(bolt_req)
                     return to_azure_func_response(bolt_resp)
-                else
+                else:
                     bolt_resp = oauth_flow.handle_installation(to_bolt_request(req))
                     return to_azure_func_response(bolt_resp)
         elif method == "POST":
