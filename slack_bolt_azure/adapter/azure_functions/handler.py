@@ -8,7 +8,7 @@ from slack_bolt.response import BoltResponse
 
 
 def to_bolt_request(req: func.HttpRequest) -> BoltRequest:
-    body = str(req.get_body())
+    body = req.get_body().decode("utf8")
     query=json.dumps(dict(req.params))
     headers=dict(req.headers)
     return BoltRequest(
