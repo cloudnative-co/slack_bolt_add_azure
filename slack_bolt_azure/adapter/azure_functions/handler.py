@@ -19,7 +19,7 @@ def _first_value(query: Dict[str, Sequence[str]], name: str) -> Optional[str]:
 
 def to_bolt_request(req: func.HttpRequest) -> BoltRequest:
     body = req.get_body().decode("utf8")
-    query=json.dumps(dict(req.params))
+    query=dict(req.params)
     headers=dict(req.headers)
     return BoltRequest(
         body=body,
@@ -58,8 +58,9 @@ class SlackRequestHandler:
         if method == "GET":
             if self.app.oauth_flow is not None:
                 oauth_flow = self.app.oauth_flow
-                bolt_req: BoltRequest = to_bolt_request(event)
+                bolt_req: BoltRequest = to_bolt_request(req)
                 query = bolt_req.query
+
                 is_callback = query is not None and (
                     (_first_value(query, "code") is not None and _first_value(query, "state") is not None)
                     or _first_value(query, "error") is not None

@@ -15,6 +15,8 @@ from slack_bolt.util.utils import create_web_client
 
 
 class AzureBlobOAuthFlow(OAuthFlow):
+    _logger : Logger
+
     def __init__(
         self,
         *,
@@ -43,6 +45,7 @@ class AzureBlobOAuthFlow(OAuthFlow):
         settings = settings or OAuthSettings(client_id=client_id, client_secret=client_secret)
 
         blob_client = BlobServiceClient.from_connection_string(connect_str)
+        self._logger = logger
 
         if settings.state_store is None or not isinstance(settings.state_store, AzureBlobOAuthStateStore):
             settings.state_store = AzureBlobOAuthStateStore(
