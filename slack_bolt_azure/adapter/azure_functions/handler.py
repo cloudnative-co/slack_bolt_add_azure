@@ -30,7 +30,9 @@ def to_bolt_request(req: func.HttpRequest) -> BoltRequest:
 
 def to_azure_func_response(bolt_resp: BoltResponse) -> func.HttpResponse:
     body = bolt_resp.body
-    headers = bolt_resp.headers
+    headers = dict()
+    for k, v in bolt_resp.headers.items():
+        headers[k] = v[0]
     code = bolt_resp.status
     resp = func.HttpResponse(
         body=body, status_code=code, headers=headers
